@@ -17,24 +17,20 @@ type RegisterFormData = {
 };
 
 export default function RegisterPage() {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<RegisterFormData>();
-
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<RegisterFormData>();
   const router = useRouter();
+  
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // ✅ Function to handle registration
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     setErrorMessage("");
+    setSuccessMessage("");
 
     try {
-      const response = await fetch("/api/auth/college/register", { // ✅ Correct API Path
+      const response = await fetch("/api/college/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -45,18 +41,20 @@ export default function RegisterPage() {
           deemed_university: data.deemedUniversity,
           recognition_status: data.recognitionStatus,
           council_issuing_code: data.council,
-          superAdminId: "12345678-abcd-efgh-ijkl-1234567890ab", // ✅ Replace with a valid superAdmin ID
+          superAdminId: "YOUR_SUPER_ADMIN_ID", // ✅ Replace with actual superAdmin ID
         }),
       });
 
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.error || "Failed to register");
+      const result = await response.json();
+      
+      if (response.ok) {
+        setSuccessMessage("College registered successfully! Redirecting to login...");
+        setTimeout(() => {
+          router.push("/college/login");
+        }, 2000);
+      } else {
+        throw new Error(result.error || "Something went wrong!");
       }
-
-      alert("Registration successful!");
-      router.push("/college/login"); // ✅ Redirect to login after success
     } catch (error: any) {
       setErrorMessage(error.message);
     } finally {
@@ -72,6 +70,7 @@ export default function RegisterPage() {
         </h2>
 
         {errorMessage && <p className="text-red-500 text-center mb-4">{errorMessage}</p>}
+        {successMessage && <p className="text-green-500 text-center mb-4">{successMessage}</p>}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Institution Name */}
@@ -82,7 +81,9 @@ export default function RegisterPage() {
               {...register("institutionName", { required: "Institution Name is required" })}
               className="w-full p-2 border rounded"
             />
-            {errors.institutionName && <p className="text-red-500 text-sm">{errors.institutionName.message}</p>}
+            {errors.institutionName && (
+              <p className="text-red-500 text-sm">{errors.institutionName.message}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -104,7 +105,9 @@ export default function RegisterPage() {
               {...register("password", { required: "Password is required", minLength: 6 })}
               className="w-full p-2 border rounded"
             />
-            {errors.password && <p className="text-red-500 text-sm">Password must be at least 6 characters</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">Password must be at least 6 characters</p>
+            )}
           </div>
 
           {/* Affiliated University */}
@@ -115,7 +118,9 @@ export default function RegisterPage() {
               {...register("affiliatedUniversity", { required: "Affiliated University is required" })}
               className="w-full p-2 border rounded"
             />
-            {errors.affiliatedUniversity && <p className="text-red-500 text-sm">{errors.affiliatedUniversity.message}</p>}
+            {errors.affiliatedUniversity && (
+              <p className="text-red-500 text-sm">{errors.affiliatedUniversity.message}</p>
+            )}
           </div>
 
           {/* Deemed University */}
@@ -126,7 +131,9 @@ export default function RegisterPage() {
               {...register("deemedUniversity", { required: "Deemed University is required" })}
               className="w-full p-2 border rounded"
             />
-            {errors.deemedUniversity && <p className="text-red-500 text-sm">{errors.deemedUniversity.message}</p>}
+            {errors.deemedUniversity && (
+              <p className="text-red-500 text-sm">{errors.deemedUniversity.message}</p>
+            )}
           </div>
 
           {/* Recognition Status */}
@@ -137,7 +144,15 @@ export default function RegisterPage() {
               {...register("recognitionStatus", { required: "Recognition Status is required" })}
               className="w-full p-2 border rounded"
             />
-            {errors.recognitionStatus && <p className="text-red-500 text-sm">{errors.recognitionStatus.message}</p>}
+            {errors.recognitionStatus && (
+              <p className="text-red-500 text-sm">{errors.recognitionStatus.message}</p>
+            )}
+          </div>
+
+          {/* Institution Code (Optional) */}
+          <div>
+            <label className="block font-medium">Institution Code (Optional)</label>
+            <input type="text" {...register("institutionCode")} className="w-full p-2 border rounded" />
           </div>
 
           {/* Council */}
@@ -159,19 +174,31 @@ export default function RegisterPage() {
               {...register("issuingCode", { required: "Issuing Code is required" })}
               className="w-full p-2 border rounded"
             />
-            {errors.issuingCode && <p className="text-red-500 text-sm">{errors.issuingCode.message}</p>}
+            {errors.issuingCode && (
+              <p className="text-red-500 text-sm">{errors.issuingCode.message}</p>
+            )}
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full p-3 rounded-lg shadow-md transition-all hover:scale-[1.02] ${
-              loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600 text-white"
-            }`}
-          >
-            {loading ? "Registering..." : "Register"}
-          </button>
+          {/* Buttons */}
+          <div className="flex justify-between">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`px-4 py-2 text-white rounded ${
+                loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+              }`}
+            >
+              {loading ? "Registering..." : "Register"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => reset()}
+              className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </div>
