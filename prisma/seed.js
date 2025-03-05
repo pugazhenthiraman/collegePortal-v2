@@ -1,6 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
+
+
+
 
 async function main() {
     // Hash passwords
@@ -13,12 +16,11 @@ async function main() {
     // Super Admin
     const superAdmin = await prisma.superAdmin.create({
         data: {
-            email: "superadmin@admin.com",
+            email: "jerome@admin.com",
             password: hashedSuperAdminPassword,
         }
     });
 
-    console.log("✅ Super Admin Created:", superAdmin.email);
 
     // College
     const college = await prisma.college.create({
@@ -31,7 +33,6 @@ async function main() {
             institute_code : "STS",
             council_issuing_code : "INST",
             password: hashedCollegePassword,
-            superAdminId: superAdmin.id,
         }
     });
 
