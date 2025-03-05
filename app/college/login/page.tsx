@@ -18,16 +18,39 @@ export default function CollegeLoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
-    
-    // Simulated login logic (Replace with API call)
-    setTimeout(() => {
-      if (data.email === "college@saas.com" && data.password === "college123") {
-        router.push("/college/dashboard"); // Redirect to College Dashboard
-      } else {
-        setErrorMessage("Invalid email or password");
+    setErrorMessage("");
+
+    console.log("data: ", data);
+
+    try {
+      const response = await fetch("/api/auth/college/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Invalid credentials");
       }
+
+      const result = await response.json();
+
+      console.log("Login Result:", result);
+
+      // ✅ Store Token in LocalStorage
+      localStorage.setItem("accessToken", result.token);
+      localStorage.setItem("userRole", result.role);
+
+      router.push("/college/dashboard"); // ✅ Redirect to Admin Dashboard
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("An unknown error occurred");
+      }
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (

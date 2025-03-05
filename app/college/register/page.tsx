@@ -45,7 +45,7 @@ export default function RegisterPage() {
           deemed_university: data.deemedUniversity,
           recognition_status: data.recognitionStatus,
           council_issuing_code: data.council,
-          superAdminId: "1545a6b20-3d8c-46d5-83e7-40b4e0a15dfb", // ✅ Replace with a valid superAdmin ID
+         
         }),
       });
 
