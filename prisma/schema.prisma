@@ -30,9 +30,8 @@ model SuperAdmin {
   createdAt DateTime @default(now())
 
   role      UserRole @default(SUPER_ADMIN)
-
-  colleges College[]
 }
+
 
 //// 🏢 COLLEGE (Acts as College Admin) ////
 model College {
@@ -41,7 +40,6 @@ model College {
   email        String     @unique
   password     String
   address      String?
-
 
   affiliated_university   String
   deemed_university       String
@@ -53,9 +51,6 @@ model College {
 
   remark                  String?
 
-
-  superAdminId String
-  superAdmin   SuperAdmin @relation(fields: [superAdminId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())
   status       CollegeStatus @default(PENDING)
 
@@ -65,6 +60,7 @@ model College {
   faculty     Faculty[]
   students    Student[]
 }
+
 
 //// 🎓 DEPARTMENT ////
 model Department {

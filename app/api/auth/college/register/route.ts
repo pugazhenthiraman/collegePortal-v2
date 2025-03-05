@@ -24,10 +24,9 @@ export async function POST(req: NextRequest) {
       council_issuing_code, 
       deemed_university, 
       recognition_status, 
-      superAdminId 
     } = body;
 
-    if (!name || !email || !password || !deemed_university || !recognition_status || !superAdminId) {
+    if (!name || !email || !password || !deemed_university || !recognition_status) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -51,7 +50,6 @@ export async function POST(req: NextRequest) {
         council_issuing_code,
         deemed_university,
         recognition_status,
-        superAdminId,
         status: "PENDING", // New college starts with pending approval
       },
     });
