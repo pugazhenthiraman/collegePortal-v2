@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CollegeStatus {
+  PENDING
+  REJECTED
+  ACTIVE
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  COLLEGE
+  DEPARTMENT
+  HOD
+  FACULTY
+  STUDENT
+}
+
+//// 🏫 SUPER ADMIN ////
+model SuperAdmin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  role      UserRole @default(SUPER_ADMIN)
+
+  colleges College[]
+}
+
+//// 🏢 COLLEGE (Acts as College Admin) ////
+model College {
+  id           String     @id @default(uuid())
+  name         String     @unique
+  email        String     @unique
+  password     String
+  address      String?
+
+
+  affiliated_university   String
+  deemed_university       String
+  recognition_status      String
+  institute_code          String?
+  council_issuing_code    String
+
+  role                    UserRole @default(COLLEGE)
+
+  remark                  String?
+
+
+  superAdminId String
+  superAdmin   SuperAdmin @relation(fields: [superAdminId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  status       CollegeStatus @default(PENDING)
+
+  // 🔥 FIXED: Adding Reverse Relations
+  departments Department[]
+  hods        HOD[]
+  faculty     Faculty[]
+  students    Student[]
+}
+
+//// 🎓 DEPARTMENT ////
+model Department {
+  id        String  @id @default(uuid())
+  name      String
+  email     String  @unique
+  collegeId String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  role      UserRole @default(DEPARTMENT)
+
+
+  // 🔥 FIXED: Define `HOD` relation properly
+  hod HOD?
+
+  faculty  Faculty[]
+  students Student[]
+}
+
+//// 👨‍🏫 HEAD OF DEPARTMENT (HOD) ////
+model HOD {
+  id        String  @id @default(uuid())
+  email     String  @unique
+  password  String
+  name      String
+  collegeId String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  departmentId String     @unique
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  role      UserRole @default(HOD)
+
+
+  // 🔥 FIXED: Remove `students` relation (or add `hodId` in `Student`)
+  faculty   Faculty[]
+  createdAt DateTime  @default(now())
+  Student   Student[]
+}
+
+//// 👩‍🏫 FACULTY MEMBERS ////
+model Faculty {
+  id        String  @id @default(uuid())
+  email     String  @unique
+  password  String
+  name      String
+  collegeId String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  role      UserRole @default(FACULTY)
+
+
+  hodId String?
+  hod   HOD?    @relation(fields: [hodId], references: [id])
+
+  students  Student[] @relation("FacultyStudents")
+  createdAt DateTime  @default(now())
+}
+
+//// 👨‍🎓 STUDENTS ////
+model Student {
+  id        String  @id @default(uuid())
+  email     String  @unique
+  password  String
+  name      String
+  collegeId String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  facultyId String
+  faculty   Faculty? @relation("FacultyStudents", fields: [facultyId], references: [id])
+
+  // 🔥 FIXED: Add relation to `HOD` to solve missing relation error
+  hodId String?
+  hod   HOD?    @relation(fields: [hodId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  role      UserRole @default(STUDENT)
+
+}
