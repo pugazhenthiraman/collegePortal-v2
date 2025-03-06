@@ -8,10 +8,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // Show Left Sidebar only for Admin Pages (except login)
   const showSidebar = pathname.startsWith("/admin") && pathname !== "/admin/login";
+  
+
+  const Links = [
+    
+  { name: "Dashboard", path: "/admin/dashboard/adminHome" },
+  { name: "College Onboarding", path: "/admin/dashboard/collegeOnboarding" },
+  { name: "Subscription Status", path: "/admin/dashboard/subscriptionStatus" },
+  { name: "Reports", path: "/admin/dashboard/report" },
+];
+
+
 
   return (
     <div className="flex">
-      {showSidebar && <LeftSidebar />} {/* ✅ Left Sidebar for Admin Pages */}
+      {showSidebar && <LeftSidebar Links={Links} Header={"Admin Panel"} />} {/* ✅ Left Sidebar for Admin Pages */}
       <main className={`flex-grow ${showSidebar ? "ml-64" : ""}`}>{children}</main>
     </div>
   );

@@ -5,6 +5,6 @@ export type College = {
   affiliatedUniversity: string;
   recognitionStatus: string;
   institutionCode?: string; // Optional field
-  council: string;
-  issuingCode: string;
+  councilissuingCode: string;
+  // issuingCode: string;
 };

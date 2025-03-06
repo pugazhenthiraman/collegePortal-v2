@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-type LoginFormData = {
+interface LoginFormData {
   email: string;
   password: string;
-};
+}
 
 export default function AdminLoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
@@ -18,8 +18,6 @@ export default function AdminLoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
     setErrorMessage("");
-
-    console.log("data: ", data);
 
     try {
       const response = await fetch("/api/auth/admin/login", {
@@ -34,13 +32,10 @@ export default function AdminLoginPage() {
 
       const result = await response.json();
 
-      console.log("Login Result:", result);
-
-      // ✅ Store Token in LocalStorage
       localStorage.setItem("accessToken", result.token);
       localStorage.setItem("userRole", result.role);
 
-      router.push("/admin/dashboard/adminHome"); // ✅ Redirect to Admin Dashboard
+      router.push("/admin/dashboard/adminHome");
     } catch (error: unknown) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -68,10 +63,16 @@ export default function AdminLoginPage() {
             className="w-full p-3 border border-gray-300 rounded-lg" />
           {errors.password && <p className="text-red-500">{errors.password.message}</p>}
 
-          <button type="submit" className={`w-full p-3 rounded-lg ${loading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700 text-white"}`}>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full p-3 rounded-lg ${loading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700 text-white"}`}
+          >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        {loading && <div className="text-center mt-4">Loading, please wait...</div>}
       </div>
     </div>
   );

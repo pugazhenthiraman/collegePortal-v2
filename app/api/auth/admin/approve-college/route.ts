@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken"; // ✅ Import JWT for manual verification
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -13,10 +13,10 @@ export async function PATCH(req: NextRequest) {
     }
 
     // ✅ Get the token from the header
-    const token = authHeader.split(" ")[1]; // Extract token after "Bearer "
+    const token = authHeader.split(" ")[1];
 
     // ✅ Verify Token using NEXTAUTH_SECRET
-    let decodedToken : any ;
+    let decodedToken: any;
     try {
       decodedToken = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
     } catch (error) {
@@ -45,12 +45,25 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "College not found" }, { status: 404 });
     }
 
-    // ✅ Prevent re-approval or re-rejection
-    if (college.status !== "PENDING") {
-      return NextResponse.json({ error: `College is already ${college.status}` }, { status: 400 });
+    // ✅ Prevent re-approval (if already ACTIVE, it can't be set to ACTIVE again)
+    if (college.status === "ACTIVE" && status === "ACTIVE") {
+      return NextResponse.json({ error: "College is already ACTIVE" }, { status: 400 });
     }
 
-    // ✅ Approve or Reject the college
+    // ✅ Allow rejecting colleges regardless of their current status (PENDING or ACTIVE)
+    if (status === "REJECTED") {
+      const updatedCollege = await prisma.college.update({
+        where: { id: collegeId },
+        data: { status, remark },
+      });
+
+      return NextResponse.json(
+        { message: "College rejected successfully", college: updatedCollege },
+        { status: 200 }
+      );
+    }
+
+    // ✅ Approve the college if it was pending
     const updatedCollege = await prisma.college.update({
       where: { id: collegeId },
       data: { status, remark },
@@ -60,7 +73,6 @@ export async function PATCH(req: NextRequest) {
       { message: `College ${status.toLowerCase()} successfully`, college: updatedCollege },
       { status: 200 }
     );
-
   } catch (error) {
     console.error("Error approving/rejecting college:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

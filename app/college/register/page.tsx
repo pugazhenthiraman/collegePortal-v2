@@ -65,7 +65,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 font-extrabold pt-32">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 text-base pt-32">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-6">
           Institution <span className="text-indigo-600">Register</span>
@@ -142,7 +142,7 @@ export default function RegisterPage() {
 
           {/* Council */}
           <div>
-            <label className="block font-medium">Council</label>
+            <label className="block font-medium">Council Issuing Code</label>
             <input
               type="text"
               {...register("council", { required: "Council is required" })}
@@ -151,7 +151,7 @@ export default function RegisterPage() {
             {errors.council && <p className="text-red-500 text-sm">{errors.council.message}</p>}
           </div>
 
-          {/* Issuing Code */}
+          {/* Issuing Code
           <div>
             <label className="block font-medium">Issuing Code</label>
             <input
@@ -160,7 +160,7 @@ export default function RegisterPage() {
               className="w-full p-2 border rounded"
             />
             {errors.issuingCode && <p className="text-red-500 text-sm">{errors.issuingCode.message}</p>}
-          </div>
+          </div> */}
 
           {/* Submit Button */}
           <button

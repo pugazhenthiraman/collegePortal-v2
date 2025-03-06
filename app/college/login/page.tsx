@@ -27,21 +27,25 @@ export default function CollegeLoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
+        
       });
-
-      if (!response.ok) {
-        throw new Error("Invalid credentials");
-      }
-
-      const result = await response.json();
+      console.log("college", response);
+      // let result = await response.json();
+       const result = await response.json();
 
       console.log("Login Result:", result);
+
+      if (!response.ok) {
+        throw new Error(result.error);
+      }
+
+     
 
       // ✅ Store Token in LocalStorage
       localStorage.setItem("accessToken", result.token);
       localStorage.setItem("userRole", result.role);
 
-      router.push("/college/dashboard"); // ✅ Redirect to Admin Dashboard
+      router.push("/college/dashboard/collegeHome"); // ✅ Redirect to Admin Dashboard
     } catch (error: unknown) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
