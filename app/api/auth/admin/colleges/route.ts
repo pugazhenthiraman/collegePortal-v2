@@ -52,7 +52,11 @@ export async function GET(req: NextRequest) {
         email: true,
         status: true,
         remark: true,
-        createdAt: true,
+        affiliated_university: true,
+        deemed_university: true,
+        recognition_status: true,
+        institute_code: true,
+        council_issuing_code: true,
       },
       skip: (page - 1) * limit, // ✅ Skip records based on pagination
       take: limit, // ✅ Limit records per page
