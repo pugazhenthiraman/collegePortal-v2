@@ -8,21 +8,28 @@ import { College } from "../../../type";
 
 const Pagination = ({ currentPage, totalPages, onPageChange } : {currentPage: number, totalPages: number, onPageChange: any}) => {
   return (
-    <div className="flex justify-center space-x-4 mt-4">
-      <Button
-        disabled={currentPage == 1}
-        onClick={() => onPageChange(currentPage - 1)}
-      >
-        Previous
-      </Button>
-      <span className="self-center">Page {currentPage} of {totalPages || 1}</span>
-      <Button
-        disabled={currentPage === totalPages}
-        onClick={() => onPageChange(currentPage + 1)}
-      >
-        Next
-      </Button>
-    </div>
+   <div className="flex justify-center items-center space-x-4 mt-4">
+  <Button
+    className="px-3 py-2 text-xs rounded-md"
+    disabled={currentPage === 1}
+    onClick={() => onPageChange(currentPage - 1)}
+  >
+    Previous
+  </Button>
+  
+  <span className="self-center text-sm">
+    Page {currentPage} of {totalPages || 1}
+  </span>
+  
+  <Button
+    className="px-3 py-2 text-xs rounded-md"
+    disabled={currentPage === totalPages}
+    onClick={() => onPageChange(currentPage + 1)}
+  >
+    Next
+  </Button>
+</div>
+
   );
 };
 
