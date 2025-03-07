@@ -37,20 +37,33 @@ export function CollegeDetailsModal({ isOpen, onClose, college, onApprove, onRej
   </h3>
 
   <div className="grid grid-cols-[180px_auto] gap-y-2 text-gray-600">
+   
+    <span className="font-medium">ID:</span>
+    <span>{college.id}</span>
+
+    <span className="font-medium">Name:</span>
+    <span>{college.name}</span>
+
     <span className="font-medium">Email:</span>
     <span>{college.email}</span>
 
+    <span className="font-medium">Status:</span>
+    <span>{college.status}</span>
+
     <span className="font-medium">Affiliated University:</span>
-    <span>{college.affiliatedUniversity}</span>
+    <span>{college.affiliated_university}</span>
+
+    <span className="font-medium">Deemed University:</span>
+    <span>{college.deemed_university}</span>
 
     <span className="font-medium">Recognition Status:</span>
-    <span>{college.recognitionStatus}</span>
+    <span>{college.recognition_status}</span>
 
     <span className="font-medium">Institution Code:</span>
-    <span>{college.institutionCode || "N/A"}</span>
+    <span>{college.institute_code || "N/A"}</span>
 
     <span className="font-medium">Council Issuing Code:</span>
-    <span>{college.issuingCode}</span>
+    <span>{college.council_issuing_code}</span>
   </div>
 </div>
 
